@@ -290,6 +290,25 @@ onUnmounted(() => {
   to { transform: rotate(360deg); }
 }
 
+.frames-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 15px;
+  padding: 10px;
+}
+
+.frame-item {
+  aspect-ratio: 1;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 5px;
+}
+
 .merged-avatar {
   width: 100%;
   height: 100%;
