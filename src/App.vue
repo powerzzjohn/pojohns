@@ -1,0 +1,7 @@
+<template>
+  <avatar-maker />
+</template>
+
+<script setup lang="ts">
+import AvatarMaker from '@/views/AvatarMaker.vue'
+</script>

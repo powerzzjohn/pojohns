@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.26.0",
+    "@vue/cli-plugin-typescript": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "qrcode-vue": "^1.2.0",
+    "vue-cropper": "^1.1.4"
+  }
+}
