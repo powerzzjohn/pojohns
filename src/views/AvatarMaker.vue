@@ -89,7 +89,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import QrcodeVue from 'qrcode-vue'
+import QrcodeVue from 'qrcode.vue'
 import { Button, Icon, Toast, Popup } from 'vant'
 import html2canvas from 'html2canvas'
 import { saveAs } from 'file-saver'
