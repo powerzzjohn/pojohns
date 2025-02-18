@@ -1,11 +1,13 @@
 {
+  "version": 2,
   "builds": [
     {
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
+        "distDir": "dist",
         "buildCommand": "npm run build",
-        "outputDirectory": "dist"
+        "maxLambdaSize": "50mb"
       }
     }
   ],
@@ -17,5 +19,11 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
 }

@@ -75,6 +75,17 @@
       @change="handleFileChange"
     />
 
+你不熟    <!-- 添加确认对话框 -->
+    <van-dialog
+      v-model:show="showConfirmDialog"
+      title="确认使用此图片？"
+      show-cancel-button
+      @confirm="handleConfirm"
+      :before-close="handleDialogClose"
+    >
+      <img :src="selectedImage" style="width: 100%; max-height: 300px; object-fit: contain;" />
+    </van-dialog>
+
     <image-cropper
       v-model:visible="showCropper"
       :image-url="cropperImage"
@@ -90,7 +101,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 import QrcodeVue from 'qrcode.vue'
-import { Button, Icon, Toast, Popup } from 'vant'
+import { Button, Icon, Toast, Popup, Dialog } from 'vant'  // 添加 Dialog
 import html2canvas from 'html2canvas'
 import { saveAs } from 'file-saver'
 import ImageCropper from '@/components/ImageCropper.vue'
@@ -127,10 +138,27 @@ const uploadPhoto = () => {
   fileInput.value?.click()
 }
 
+const showConfirmDialog = ref(false)
+const selectedImage = ref('')
+
 const handleFileChange = (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
   if (file) {
-    cropperImage.value = URL.createObjectURL(file)
+    selectedImage.value = URL.createObjectURL(file)
+    showConfirmDialog.value = true
+  }
+}
+
+const handleDialogClose = (action: string, done: Function) => {
+  if (action === 'confirm') {
+    handleConfirm()
+  }
+  done()
+}
+
+const handleConfirm = () => {
+  if (selectedImage.value) {
+    cropperImage.value = selectedImage.value
     showCropper.value = true
   }
 }
@@ -339,5 +367,34 @@ onUnmounted(() => {
   word-break: break-all;
   color: #666;
   font-size: 14px;
+}
+
+.user-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.avatar-frame {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  color: #666;
 }
 </style>
