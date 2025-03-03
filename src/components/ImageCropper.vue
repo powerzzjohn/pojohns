@@ -29,31 +29,33 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import VueCropper from 'vue-cropper'
 import 'vue-cropper/dist/index.css'
+import { VueCropper } from 'vue-cropper'
 
 const props = defineProps<{
   visible: boolean
   imageUrl: string
 }>()
 
-const emit = defineEmits(['update:visible', 'confirm'])
+const emit = defineEmits<{
+  (e: 'update:visible', value: boolean): void
+  (e: 'confirm', data: string): void
+}>()
 
 const cropperRef = ref()
 
+const confirm = () => {
+  if (cropperRef.value) {
+    // 使用 vue-cropper 的 getCropData 方法获取裁剪后的数据
+    cropperRef.value.getCropData((dataUrl: string) => {
+      emit('confirm', dataUrl)
+      emit('update:visible', false)
+    })
+  }
+}
+
 const cancel = () => {
   emit('update:visible', false)
-}
-
-const confirm = () => {
-  cropperRef.value.getCropData((data: string) => {
-    emit('confirm', data)
-    emit('update:visible', false)
-  })
-}
-
-const realTime = (data: any) => {
-  // 实时预览
 }
 </script>
 

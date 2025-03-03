@@ -1,17 +1,20 @@
 {
-  "name": "avatar-maker",
+  "name": "xinnianavatar-maker",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "dev": "vite"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.26.0",
+    "@vitejs/plugin-vue": "^5.2.1",
     "@vue/cli-plugin-typescript": "^5.0.8",
     "@vue/cli-service": "^5.0.8",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vite": "^6.2.0"
   },
   "dependencies": {
     "@vue/compiler-sfc": "^3.3.0",
@@ -19,8 +22,8 @@
     "html2canvas": "^1.4.1",
     "qrcode.vue": "^3.4.1",
     "vant": "^4.9.16",
-    "vercel": "^41.1.0",
     "vue": "^3.3.0",
-    "vue-cropper": "^1.1.4"
+    "vue-cropper": "^1.1.4",
+    "vue-picture-cropper": "^0.7.0"
   }
 }

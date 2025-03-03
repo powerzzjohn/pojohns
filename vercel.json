@@ -1,29 +1,18 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist",
-        "buildCommand": "npm run build",
-        "maxLambdaSize": "50mb"
-      }
+  "name": "xinnianavatar-maker",
+  "builds": [{
+    "src": "package.json",
+    "use": "@vercel/static-build",
+    "config": {
+      "distDir": "dist"
     }
-  ],
-  "routes": [
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
-  "functions": {
-    "api/**/*.js": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  }
+  }],
+  "routes": [{
+    "handle": "filesystem"
+  },
+  {
+    "src": "/(.*)",
+    "dest": "/"
+  }]
 }

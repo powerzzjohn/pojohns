@@ -30,7 +30,7 @@
       </div>
 
       <div class="frame-selector">
-        <div class="title">选择你的头像框</div>
+        <div class="title">选择你的标签</div>
         <div class="frames-grid">
           <div 
             v-for="(frame, index) in frames" 
@@ -54,7 +54,6 @@
         >
           生成新头像
         </van-button>
-        <van-button class="bottom-btn" type="info" @click="showQRCode">分享链接</van-button>
       </div>
 
       <!-- 添加二维码弹窗 -->
@@ -75,7 +74,7 @@
       @change="handleFileChange"
     />
 
-你不熟    <!-- 添加确认对话框 -->
+    <!-- 添加确认对话框 -->
     <van-dialog
       v-model:show="showConfirmDialog"
       title="确认使用此图片？"
@@ -105,14 +104,15 @@ import { Button, Icon, Toast, Popup, Dialog } from 'vant'  // 添加 Dialog
 import html2canvas from 'html2canvas'
 import { saveAs } from 'file-saver'
 import ImageCropper from '@/components/ImageCropper.vue'
+import { nextTick } from 'vue'
 
 const frames = ref([
-  { url: require('@/assets/frames/frame1.png') },
-  { url: require('@/assets/frames/frame2.png') },
-  { url: require('@/assets/frames/frame3.png') },
-  { url: require('@/assets/frames/frame4.png') },
-  { url: require('@/assets/frames/frame5.png') },
-  { url: require('@/assets/frames/frame6.png') }
+  { url: new URL('@/assets/frames/frame1.png', import.meta.url).href },
+  { url: new URL('@/assets/frames/frame2.png', import.meta.url).href },
+  { url: new URL('@/assets/frames/frame3.png', import.meta.url).href },
+  { url: new URL('@/assets/frames/frame4.png', import.meta.url).href },
+  { url: new URL('@/assets/frames/frame5.png', import.meta.url).href },
+  { url: new URL('@/assets/frames/frame6.png', import.meta.url).href }
 ])
 
 const selectedFrameIndex = ref(0)
@@ -125,13 +125,9 @@ const avatarRef = ref<HTMLElement>()
 const audioRef = ref<HTMLAudioElement>()
 const isPlaying = ref(false)
 
-const useCurrentAvatar = async () => {
-  try {
-    const userInfo = await wx.getUserInfo()
-    selectedAvatar.value = userInfo.avatarUrl
-  } catch (error) {
-    Toast('获取头像失败')
-  }
+const useCurrentAvatar = () => {
+  // 在Web环境中直接跳转到上传照片模式
+  uploadPhoto()
 }
 
 const uploadPhoto = () => {
@@ -149,16 +145,18 @@ const handleFileChange = (event: Event) => {
   }
 }
 
-const handleDialogClose = (action: string, done: Function) => {
-  if (action === 'confirm') {
-    handleConfirm()
+const handleDialogClose = (action: string) => {
+  showConfirmDialog.value = false
+  if (action === 'cancel') {
+    selectedImage.value = ''
   }
-  done()
+  return true
 }
 
-const handleConfirm = () => {
+const handleConfirm = async () => {
   if (selectedImage.value) {
     cropperImage.value = selectedImage.value
+    await nextTick()
     showCropper.value = true
   }
 }
@@ -235,60 +233,32 @@ onUnmounted(() => {
 <style scoped>
 .avatar-maker {
   min-height: 100vh;
-  background-color: #FF0000;
+  background: #FF0000 url('@/assets/bg-pattern.png') repeat;
   padding: 20px;
-  box-sizing: border-box;
-  background-image: url('@/assets/bg-pattern.png');
-  background-repeat: repeat;
-  background-size: 200px 200px;
   position: relative;
-}
-
-.avatar-maker::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 0, 0, 0.1));
-  pointer-events: none;
-}
-
-.main-content {
-  position: relative;
-  z-index: 1;
 }
 
 .decoration {
+  position: absolute;
+  top: 20px;
+  right: 20px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  margin-bottom: 20px;
+  gap: 10px;
 }
 
 .fu-icon {
-  width: 80px;
-  height: 80px;
-  filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
-  transform: rotate(-15deg);
-  transition: transform 0.3s;
-}
-
-.fu-icon:hover {
-  transform: rotate(0deg) scale(1.1);
+  width: 60px;
+  height: 60px;
 }
 
 .music-control {
-  width: 60px;
-  height: 60px;
-  background: rgba(255, 215, 0, 0.15);
-  border: 2px solid rgba(255, 215, 0, 0.3);
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(5px);
@@ -318,29 +288,31 @@ onUnmounted(() => {
   to { transform: rotate(360deg); }
 }
 
-.frames-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 15px;
-  padding: 10px;
+.main-content {
+  max-width: 500px;
+  margin: 0 auto;
+  padding-top: 40px;
 }
 
-.frame-item {
-  aspect-ratio: 1;
-  border: 2px solid transparent;
+.preview-area {
+  margin-bottom: 30px;
+}
+
+.avatar-frame {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  position: relative;
   border-radius: 10px;
   overflow: hidden;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 5px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.merged-avatar {
+.user-avatar {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .frame-overlay {
@@ -350,6 +322,86 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   pointer-events: none;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.action-btn {
+  flex: 1;
+  height: 40px;
+  border-radius: 20px;
+  background: #FF4D4F;
+  color: white;
+  border: none;
+}
+
+.frame-selector {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.title {
+  text-align: center;
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.frames-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.frame-item {
+  aspect-ratio: 1;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+  padding: 5px;
+}
+
+.frame-item.active {
+  border-color: #FF4D4F;
+  transform: scale(1.05);
+}
+
+.frame-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.bottom-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.bottom-btn {
+  flex: 1;
+  height: 40px;
+  border-radius: 20px;
+}
+
+.placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.9);
+  color: #666;
 }
 
 .qr-container {
@@ -364,37 +416,8 @@ onUnmounted(() => {
 
 .qr-container p {
   margin-top: 15px;
-  word-break: break-all;
   color: #666;
   font-size: 14px;
-}
-
-.user-avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.avatar-frame {
-  width: 200px;
-  height: 200px;
-  margin: 0 auto;
-  position: relative;
-  border-radius: 50%;
-  overflow: hidden;
-  background: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.9);
-  color: #666;
+  word-break: break-all;
 }
 </style>
